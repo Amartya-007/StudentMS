@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StudentMS.Common.Models;
+using StudentMS.Models.RequestModels;
+using StudentMS.Models.ResponseModels;
 
 namespace StudentMS.Business.Interfaces
 {
-    internal class ITeacherBusiness
+    public interface ITeacherBusiness
     {
+        Task<AppResult<List<TeacherResponseModel>>> GetTeachers(TeacherRequestModel request);
+        Task<AppResult<TeacherResponseModel>>       GetTeacherById(TeacherRequestModel request);
+        Task<AppResult<int>>                        InsertTeacher(TeacherRequestModel request);
+        Task<AppResult<bool>>                       UpdateTeacher(TeacherRequestModel request);
+        Task<AppResult<bool>>                       DeleteTeacher(TeacherRequestModel request);
     }
 }

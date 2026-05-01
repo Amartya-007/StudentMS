@@ -1,12 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StudentMS.Common.CommonInfra;
+using StudentMS.Common.Models;
+using System.Data;
 
 namespace StudentMS.Models.DomainModels
 {
-    internal class StudentDomainModel
+    public class StudentDomainModel : DomainRequestModelBase
     {
+        [DBProperty("@StudentId", SqlDbType.Int)]
+        public int StudentId { get; set; }
+
+        [DBProperty("@Name", SqlDbType.NVarChar)]
+        public string? Name { get; set; }
+
+        [DBProperty("@DOB", SqlDbType.Date)]
+        public DateTime? DOB { get; set; }
+
+        [DBProperty("@Gender", SqlDbType.NVarChar)]
+        public string? Gender { get; set; }
+
+        [DBProperty("@Phone", SqlDbType.NVarChar)]
+        public string? Phone { get; set; }
+
+        [DBProperty("@Address", SqlDbType.NVarChar)]
+        public string? Address { get; set; }
+
+        [DBProperty("@DepartmentId", SqlDbType.Int)]
+        public int DepartmentId { get; set; }
     }
 }

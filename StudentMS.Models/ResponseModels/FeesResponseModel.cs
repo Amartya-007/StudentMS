@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StudentMS.Common.Models;
 
 namespace StudentMS.Models.ResponseModels
 {
-    internal class FeesResponseModel
+    public class FeesResponseModel : ResponseModelBase
     {
+        public int       FeeId       { get; set; }
+        public int       StudentId   { get; set; }
+        public string    StudentName { get; set; } = string.Empty;
+        public decimal   Amount      { get; set; }
+        public DateTime? PaidDate    { get; set; }
+        public string    Status      { get; set; } = string.Empty;  // Paid / Pending
     }
 }

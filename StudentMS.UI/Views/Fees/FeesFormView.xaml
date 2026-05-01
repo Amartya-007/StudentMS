@@ -1,0 +1,80 @@
+<Window x:Class="StudentMS.UI.Views.Fees.FeesFormView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:converters="clr-namespace:StudentMS.UI.Converters"
+        Title="{Binding FormTitle}"
+        Height="360" Width="460"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F5F5F5">
+
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter        x:Key="BoolToVisibility"/>
+        <converters:InverseBoolConverter             x:Key="InverseBool"/>
+        <converters:NullOrEmptyToVisibilityConverter x:Key="StringToVisibility"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#512DA8" Padding="24,18">
+            <StackPanel Orientation="Horizontal">
+                <md:PackIcon Kind="CurrencyUsd" Foreground="White"
+                             Width="24" Height="24"
+                             VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <TextBlock Text="{Binding FormTitle}"
+                           FontSize="17" FontWeight="Medium"
+                           Foreground="White" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Fields -->
+        <StackPanel Grid.Row="1" Margin="24,20,24,8">
+
+            <TextBlock Text="Student *" FontSize="12" Foreground="#616161" Margin="0,0,0,4"/>
+            <ComboBox ItemsSource="{Binding Students}"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="StudentId"
+                      SelectedValue="{Binding StudentId}"
+                      md:HintAssist.Hint="Select student"
+                      Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                      Foreground="#212121" Margin="0,0,0,16"
+                      IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+
+            <TextBlock Text="Amount *" FontSize="12" Foreground="#616161" Margin="0,0,0,4"/>
+            <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}"
+                     md:HintAssist.Hint="Enter amount (e.g. 5000)"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Foreground="#212121" Margin="0,0,0,12"
+                     IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+
+            <Border Background="#FFEBEE" CornerRadius="4" Padding="12,8"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibility}}">
+                <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="AlertCircle" Foreground="#C62828" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#C62828" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Background="White"
+                BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Padding="24,14">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Cancel" IsCancel="True"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Foreground="#616161" Padding="20,8" Margin="0,0,10,0"/>
+                <Button Content="Save" Command="{Binding SaveCommand}"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Padding="24,8"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

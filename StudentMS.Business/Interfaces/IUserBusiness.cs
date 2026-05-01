@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StudentMS.Common.Models;
+using StudentMS.Models.RequestModels;
+using StudentMS.Models.ResponseModels;
 
 namespace StudentMS.Business.Interfaces
 {
-    internal class IUserBusiness
+    public interface IUserBusiness
     {
+        Task<AppResult<UserResponseModel>> ValidateUser(UserRequestModel request);
+        Task<AppResult<int>>              CreateUser(UserRequestModel request);
     }
 }

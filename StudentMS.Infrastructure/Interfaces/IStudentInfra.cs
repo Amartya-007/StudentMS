@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StudentMS.Models.DomainModels;
+using StudentMS.Models.ResponseModels;
 
 namespace StudentMS.Infrastructure.Interfaces
 {
-    internal class IStudentInfra
+    public interface IStudentInfra
     {
+        Task<List<StudentResponseModel>> GetStudents(StudentDomainModel request);
+        Task<StudentResponseModel?>      GetStudentById(StudentDomainModel request);
+        Task<int>                        InsertStudent(StudentDomainModel request);
+        Task<bool>                       UpdateStudent(StudentDomainModel request);
+        Task<bool>                       DeleteStudent(StudentDomainModel request);
     }
 }

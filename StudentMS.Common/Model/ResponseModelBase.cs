@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StudentMS.Common.Model
+﻿namespace StudentMS.Common.Models
 {
-    internal class ResponseModelBase
+    /// <summary>Base class for all response models returned from Infrastructure layer.</summary>
+    public class ResponseModelBase
     {
+        public int? TotalCount { get; set; }
     }
 }

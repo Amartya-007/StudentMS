@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StudentMS.Models.DomainModels;
+using StudentMS.Models.ResponseModels;
 
 namespace StudentMS.Infrastructure.Interfaces
 {
-    internal class IDepartmentInfra
+    public interface IDepartmentInfra
     {
+        Task<List<DepartmentResponseModel>> GetDepartments(DepartmentDomainModel request);
+        Task<DepartmentResponseModel?>      GetDepartmentById(DepartmentDomainModel request);
+        Task<int>                           InsertDepartment(DepartmentDomainModel request);
+        Task<bool>                          UpdateDepartment(DepartmentDomainModel request);
+        Task<bool>                          DeleteDepartment(DepartmentDomainModel request);
     }
 }

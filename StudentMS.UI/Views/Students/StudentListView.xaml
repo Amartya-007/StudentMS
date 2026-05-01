@@ -1,0 +1,156 @@
+<UserControl x:Class="StudentMS.UI.Views.Students.StudentListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:StudentMS.UI.Converters"
+             Background="#F5F5F5"
+             Loaded="UserControl_Loaded">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter        x:Key="BoolToVisibility"/>
+        <converters:InverseBoolConverter             x:Key="InverseBool"/>
+        <converters:NullOrEmptyToVisibilityConverter x:Key="StringToVisibility"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Page header card -->
+            <RowDefinition Height="Auto"/>  <!-- Filter bar -->
+            <RowDefinition Height="Auto"/>  <!-- Messages -->
+            <RowDefinition Height="*"/>     <!-- Data grid card -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Page header ──────────────────────────────────────────────── -->
+        <Border Grid.Row="0"
+                Background="White"
+                BorderBrush="#E0E0E0" BorderThickness="0,0,0,1"
+                Padding="24,16">
+            <DockPanel LastChildFill="False">
+                <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+                    <TextBlock Text="Students"
+                               FontSize="20" FontWeight="Bold"
+                               Foreground="#212121"/>
+                    <TextBlock Text="Manage student records"
+                               FontSize="12" Foreground="#757575"
+                               Margin="0,2,0,0"/>
+                </StackPanel>
+                <Button DockPanel.Dock="Right"
+                        Content="+ Add Student"
+                        Command="{Binding AddStudentCommand}"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        VerticalAlignment="Center"
+                        Padding="16,8"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+            </DockPanel>
+        </Border>
+
+        <!-- ── Filter bar ───────────────────────────────────────────────── -->
+        <Border Grid.Row="1"
+                Background="White"
+                BorderBrush="#E0E0E0" BorderThickness="0,0,0,1"
+                Padding="28,14">
+            <StackPanel Orientation="Horizontal">
+                <ComboBox ItemsSource="{Binding Departments}"
+                          DisplayMemberPath="DepartmentName"
+                          SelectedValuePath="DepartmentId"
+                          SelectedValue="{Binding FilterDepartmentId}"
+                          md:HintAssist.Hint="All Departments"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                          Foreground="#212121"
+                          Width="220" Margin="0,0,12,0"/>
+                <Button Content="Search"
+                        Command="{Binding LoadCommand}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Padding="20,8"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+                <Button Content="Clear"
+                        Command="{Binding LoadCommand}"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Foreground="#757575"
+                        Padding="12,8" Margin="4,0,0,0"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Messages ─────────────────────────────────────────────────── -->
+        <StackPanel Grid.Row="2" Margin="28,10,28,0">
+            <Border Background="#FFEBEE" CornerRadius="4" Padding="12,8" Margin="0,0,0,6"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibility}}">
+                <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="AlertCircle" Foreground="#C62828" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#C62828" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+            <Border Background="#E8F5E9" CornerRadius="4" Padding="12,8" Margin="0,0,0,6"
+                    Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibility}}">
+                <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="CheckCircle" Foreground="#2E7D32" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SuccessMessage}" Foreground="#2E7D32" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+            <ProgressBar IsIndeterminate="True" Height="3"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"/>
+        </StackPanel>
+
+        <!-- ── Data grid card ───────────────────────────────────────────── -->
+        <Border Grid.Row="3"
+                Background="White"
+                BorderBrush="#E0E0E0" BorderThickness="1"
+                CornerRadius="4"
+                Margin="28,12,28,28">
+            <DataGrid ItemsSource="{Binding Students}"
+                      SelectedItem="{Binding SelectedStudent}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      Foreground="#212121"
+                      BorderThickness="0"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#F0F0F0"
+                      RowHeight="44"
+                      md:DataGridAssist.CellPadding="12 4 12 4"
+                      SelectionMode="Single">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                        <Setter Property="Background"  Value="#FAFAFA"/>
+                        <Setter Property="Foreground"  Value="#424242"/>
+                        <Setter Property="FontWeight"  Value="SemiBold"/>
+                        <Setter Property="Padding"     Value="12,10"/>
+                        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID"         Binding="{Binding StudentId}"                    Width="60"/>
+                    <DataGridTextColumn Header="Name"       Binding="{Binding Name}"                         Width="*"/>
+                    <DataGridTextColumn Header="Department" Binding="{Binding DepartmentName}"               Width="160"/>
+                    <DataGridTextColumn Header="Gender"     Binding="{Binding Gender}"                       Width="80"/>
+                    <DataGridTextColumn Header="Phone"      Binding="{Binding Phone}"                        Width="120"/>
+                    <DataGridTextColumn Header="DOB"        Binding="{Binding DOB, StringFormat=dd/MM/yyyy}" Width="100"/>
+                    <DataGridTemplateColumn Header="Actions" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Content="Edit"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            Foreground="#512DA8" FontSize="12"
+                                            Command="{Binding DataContext.EditStudentCommand,
+                                                      RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}"
+                                            Padding="8,4"/>
+                                    <Button Content="Delete"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            Foreground="#C62828" FontSize="12"
+                                            Command="{Binding DataContext.DeleteStudentCommand,
+                                                      RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding StudentId}"
+                                            Padding="8,4"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>

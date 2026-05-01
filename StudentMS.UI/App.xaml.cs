@@ -19,7 +19,8 @@ namespace StudentMS.UI
 {
     public partial class App : Application
     {
-        private IServiceProvider _serviceProvider = null!;
+        // Static accessor so code-behind can resolve services without constructor injection
+        public static IServiceProvider ServiceProvider { get; private set; } = null!;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -44,28 +45,28 @@ namespace StudentMS.UI
             // 4. Register DI services
             var services = new ServiceCollection();
             RegisterServices(services);
-            _serviceProvider = services.BuildServiceProvider();
+            ServiceProvider = services.BuildServiceProvider();
 
             // 5. Show login window
-            var loginView = _serviceProvider.GetRequiredService<LoginView>();
+            var loginView = ServiceProvider.GetRequiredService<LoginView>();
             loginView.Show();
         }
 
         private static void RegisterServices(IServiceCollection services)
         {
             // Infrastructure
-            services.AddScoped<IStudentInfra, StudentInfra>();
-            services.AddScoped<ITeacherInfra, TeacherInfra>();
+            services.AddScoped<IStudentInfra,    StudentInfra>();
+            services.AddScoped<ITeacherInfra,    TeacherInfra>();
             services.AddScoped<IDepartmentInfra, DepartmentInfra>();
-            services.AddScoped<IFeesInfra, FeesInfra>();
-            services.AddScoped<IUserInfra, UserInfra>();
+            services.AddScoped<IFeesInfra,       FeesInfra>();
+            services.AddScoped<IUserInfra,       UserInfra>();
 
             // Business
-            services.AddScoped<IStudentBusiness, StudentBusiness>();
-            services.AddScoped<ITeacherBusiness, TeacherBusiness>();
+            services.AddScoped<IStudentBusiness,    StudentBusiness>();
+            services.AddScoped<ITeacherBusiness,    TeacherBusiness>();
             services.AddScoped<IDepartmentBusiness, DepartmentBusiness>();
-            services.AddScoped<IFeesBusiness, FeesBusiness>();
-            services.AddScoped<IUserBusiness, UserBusiness>();
+            services.AddScoped<IFeesBusiness,       FeesBusiness>();
+            services.AddScoped<IUserBusiness,       UserBusiness>();
 
             // ViewModels
             services.AddTransient<LoginViewModel>();

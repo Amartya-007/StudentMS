@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StudentMS.Common.Model
+﻿namespace StudentMS.Common.Models
 {
-    internal class DomainRequestModelBase
+    /// <summary>Base class for all domain models passed from Business to Infrastructure layer.</summary>
+    public class DomainRequestModelBase
     {
+        public string? Language  { get; set; } = "en";
+        public int?    UserId    { get; set; }
+        public string? IPAddress { get; set; }
     }
 }

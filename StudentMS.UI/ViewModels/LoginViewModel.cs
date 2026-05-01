@@ -4,7 +4,6 @@ using Serilog;
 using StudentMS.Business.Interfaces;
 using StudentMS.Models.RequestModels;
 using StudentMS.UI.ViewModels.Base;
-using System.Windows;
 
 namespace StudentMS.UI.ViewModels
 {
@@ -24,31 +23,57 @@ namespace StudentMS.UI.ViewModels
         private string? _password;
 
         /// <summary>
-        /// Raised when login succeeds — the View subscribes and opens MainWindow.
+        /// When true the View swaps PasswordBox for a plain TextBox so the user can read their password.
         /// </summary>
+        [ObservableProperty]
+        private bool _showPassword;
+
+        // Field-level validation messages shown inline under each field
+        [ObservableProperty]
+        private string? _usernameError;
+
+        [ObservableProperty]
+        private string? _passwordError;
+
+        /// <summary>Raised when login succeeds — the View subscribes and opens MainWindow.</summary>
         public event Action? LoginSucceeded;
+
+        [RelayCommand]
+        private void ToggleShowPassword() => ShowPassword = !ShowPassword;
 
         [RelayCommand]
         private async Task LoginAsync()
         {
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
-            {
-                SetError("Username and password are required.");
-                return;
-            }
-
-            IsBusy = true;
+            // Clear previous field errors
+            UsernameError = null;
+            PasswordError = null;
             ClearMessages();
 
+            // Field-level validation
+            bool valid = true;
+
+            if (string.IsNullOrWhiteSpace(Username))
+            {
+                UsernameError = "Username is required.";
+                valid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(Password))
+            {
+                PasswordError = "Password is required.";
+                valid = false;
+            }
+
+            if (!valid) return;
+
+            IsBusy = true;
             try
             {
-                var request = new UserRequestModel
+                var result = await _userBusiness.ValidateUser(new UserRequestModel
                 {
                     Username = Username,
                     Password = Password
-                };
-
-                var result = await _userBusiness.ValidateUser(request);
+                });
 
                 if (result.Status)
                 {
@@ -57,6 +82,7 @@ namespace StudentMS.UI.ViewModels
                 }
                 else
                 {
+                    // Show a generic message at the form level (don't reveal which field is wrong)
                     SetError(result.Message ?? "Invalid username or password.");
                 }
             }

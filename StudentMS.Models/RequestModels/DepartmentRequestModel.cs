@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StudentMS.Common.CommonInfra;
+using StudentMS.Common.Models;
+using System.Data;
 
 namespace StudentMS.Models.RequestModels
 {
-    internal class DepartmentRequestModel
+    public class DepartmentRequestModel : RequestModelBase
     {
+        [DBProperty("@DepartmentId", SqlDbType.Int)]
+        public int DepartmentId { get; set; }
+
+        [DBProperty("@DepartmentName", SqlDbType.NVarChar)]
+        public string? DepartmentName { get; set; }
     }
 }

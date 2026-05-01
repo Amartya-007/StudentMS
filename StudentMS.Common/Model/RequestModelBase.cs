@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StudentMS.Common.Model
+﻿namespace StudentMS.Common.Models
 {
-    internal class RequestModelBase
+    /// <summary>Base class for all request models passed from UI to Business layer.</summary>
+    public class RequestModelBase
     {
+        public string? Language  { get; set; } = "en";
+        public int?    UserId    { get; set; }
+        public string? IPAddress { get; set; }
     }
 }

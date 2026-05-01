@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StudentMS.Common.Models;
 
 namespace StudentMS.Models.ResponseModels
 {
-    internal class UserResponseModel
+    public class UserResponseModel : ResponseModelBase
     {
+        public int    UserId   { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public string Role     { get; set; } = string.Empty;  // Admin / Staff
+        public bool   IsActive { get; set; }
     }
 }

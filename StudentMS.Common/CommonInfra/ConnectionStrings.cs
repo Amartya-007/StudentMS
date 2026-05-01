@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace StudentMS.Common.CommonInfra
 {
-    internal class ConnectionStrings
+    public static class ConnectionStrings
     {
+        private static IConfiguration? _config;
+
+        public static void Initialize(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public static string MainDB =>
+            _config?.GetConnectionString("MainDB") ?? string.Empty;
     }
 }
