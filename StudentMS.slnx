@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="StudentMS.Business/StudentMS.Business.csproj" />
+  <Project Path="StudentMS.Common/StudentMS.Common.csproj" />
+  <Project Path="StudentMS.Infrastructure/StudentMS.Infrastructure.csproj" />
+  <Project Path="StudentMS.Models/StudentMS.Models.csproj" />
+  <Project Path="StudentMS.UI/StudentMS.UI.csproj" />
+</Solution>
