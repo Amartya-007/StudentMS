@@ -71,5 +71,3 @@ A comprehensive Student Management System built with **C#**, **.NET 8**, and **W
 dotnet test
 ```
 
-## 📝 License
-This project is licensed under the MIT License - see the LICENSE file for details.
