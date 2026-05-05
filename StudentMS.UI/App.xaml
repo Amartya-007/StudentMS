@@ -6,32 +6,60 @@
              xmlns:vmTeachers="clr-namespace:StudentMS.UI.ViewModels.Teachers"
              xmlns:vmDepts="clr-namespace:StudentMS.UI.ViewModels.Departments"
              xmlns:vmFees="clr-namespace:StudentMS.UI.ViewModels.Fees"
+             xmlns:vmUsers="clr-namespace:StudentMS.UI.ViewModels.Users"
              xmlns:vStudents="clr-namespace:StudentMS.UI.Views.Students"
              xmlns:vTeachers="clr-namespace:StudentMS.UI.Views.Teachers"
              xmlns:vDepts="clr-namespace:StudentMS.UI.Views.Departments"
-             xmlns:vFees="clr-namespace:StudentMS.UI.Views.Fees">
+             xmlns:vFees="clr-namespace:StudentMS.UI.Views.Fees"
+             xmlns:vUsers="clr-namespace:StudentMS.UI.Views.Users">
 
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+
+                <!-- Material Theme -->
                 <materialDesign:BundledTheme BaseTheme="Light"
                                              PrimaryColor="DeepPurple"
                                              SecondaryColor="Lime"/>
+
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml"/>
+
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- ViewModel -> View mapping for ContentControl navigation -->
+            <!-- GLOBAL UI FIXES -->
+            <Style TargetType="DataGrid" BasedOn="{StaticResource MaterialDesignDataGrid}"/>
+
+            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                <Setter Property="Margin" Value="4,0"/>
+            </Style>
+
+            <Style TargetType="TextBlock">
+                <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+            </Style>
+
+            <!-- ViewModel → View Mapping -->
             <DataTemplate DataType="{x:Type vmStudents:StudentListViewModel}">
                 <vStudents:StudentListView/>
             </DataTemplate>
+
             <DataTemplate DataType="{x:Type vmTeachers:TeacherListViewModel}">
                 <vTeachers:TeacherListView/>
             </DataTemplate>
+
             <DataTemplate DataType="{x:Type vmDepts:DepartmentListViewModel}">
                 <vDepts:DepartmentListView/>
             </DataTemplate>
+
             <DataTemplate DataType="{x:Type vmFees:FeesListViewModel}">
                 <vFees:FeesListView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vmUsers:UserManagementViewModel}">
+                <vUsers:UserManagementView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vmUsers:ChangePasswordViewModel}">
+                <vUsers:ChangePasswordView/>
             </DataTemplate>
 
         </ResourceDictionary>

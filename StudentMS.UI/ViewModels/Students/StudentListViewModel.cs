@@ -2,10 +2,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
 using StudentMS.Business.Interfaces;
+using StudentMS.Common.Session;
 using StudentMS.Models.RequestModels;
 using StudentMS.Models.ResponseModels;
 using StudentMS.UI.ViewModels.Base;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace StudentMS.UI.ViewModels.Students
 {
@@ -33,7 +35,15 @@ namespace StudentMS.UI.ViewModels.Students
         private string? _searchText;
 
         [ObservableProperty]
-        private int _filterDepartmentId;
+        private int? _filterDepartmentId;  // nullable so ComboBox can be cleared to null = "All"
+
+        // ── Req 3.4: Read-only mode for Teacher role ─────────────────────────
+
+        /// <summary>True when the current user is a Teacher (read-only access).</summary>
+        public bool IsReadOnly => AppSession.Current.IsTeacher;
+
+        /// <summary>Hides add/edit/delete controls for Teacher role.</summary>
+        public Visibility ActionVisibility => IsReadOnly ? Visibility.Collapsed : Visibility.Visible;
 
         /// <summary>Raised when the user clicks Add or Edit — the View opens the form.</summary>
         public event Action<int>? OpenFormRequested; // 0 = add, >0 = edit
@@ -45,11 +55,15 @@ namespace StudentMS.UI.ViewModels.Students
             ClearMessages();
             try
             {
-                var deptResult = await _departmentBusiness.GetDepartments(new DepartmentRequestModel());
-                if (deptResult.Status)
-                    Departments = new ObservableCollection<DepartmentResponseModel>(deptResult.ResponseData ?? new());
+                // Only load departments on first load (when collection is empty)
+                if (!Departments.Any())
+                {
+                    var deptResult = await _departmentBusiness.GetDepartments(new DepartmentRequestModel());
+                    if (deptResult.Status)
+                        Departments = new ObservableCollection<DepartmentResponseModel>(deptResult.ResponseData ?? new());
+                }
 
-                var request = new StudentRequestModel { DepartmentId = FilterDepartmentId };
+                var request = new StudentRequestModel { DepartmentId = FilterDepartmentId ?? 0 };
                 var result  = await _studentBusiness.GetStudents(request);
 
                 if (result.Status)
@@ -70,6 +84,13 @@ namespace StudentMS.UI.ViewModels.Students
 
         [RelayCommand]
         private void AddStudent() => OpenFormRequested?.Invoke(0);
+
+        [RelayCommand]
+        private async Task ClearFilterAsync()
+        {
+            FilterDepartmentId = null;
+            await LoadAsync();
+        }
 
         [RelayCommand]
         private void EditStudent(StudentResponseModel student)

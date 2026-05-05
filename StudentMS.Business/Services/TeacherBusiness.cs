@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using StudentMS.Business.Base;
 using StudentMS.Business.Interfaces;
+using StudentMS.Common.Logging;
 using StudentMS.Common.Models;
 using StudentMS.Infrastructure.Interfaces;
 using StudentMS.Models.DomainModels;
@@ -12,8 +13,13 @@ namespace StudentMS.Business.Services
     public class TeacherBusiness : BusinessServiceBase, ITeacherBusiness
     {
         private readonly ITeacherInfra _infra;
+        private readonly IActivityLogBusiness _logger;
 
-        public TeacherBusiness(ITeacherInfra infra) => _infra = infra;
+        public TeacherBusiness(ITeacherInfra infra, IActivityLogBusiness logger)
+        {
+            _infra  = infra;
+            _logger = logger;
+        }
 
         public async Task<AppResult<List<TeacherResponseModel>>> GetTeachers(TeacherRequestModel request)
         {
@@ -82,6 +88,11 @@ namespace StudentMS.Business.Services
                 result.ResponseData = newId;
                 result.ErrorCode    = newId > 0 ? ErrorCodes.Success : ErrorCodes.DatabaseError;
                 result.Message      = newId > 0 ? "Teacher added successfully." : "Failed to add teacher.";
+
+                if (newId > 0)
+                {
+                    _logger.LogActivity(ActivityActions.TeacherCreate, $"Created teacher '{request.Name}'", "Teacher", newId);
+                }
             }
             catch (Exception ex)
             {
@@ -103,6 +114,11 @@ namespace StudentMS.Business.Services
                 if (string.IsNullOrWhiteSpace(request.Name))
                     return Fail<bool>(ErrorCodes.ValidationFailed, "Teacher name is required.");
 
+                // Fetch existing teacher before update for audit log
+                var existingDomain = CreateRequest<TeacherDomainModel>(request);
+                existingDomain.TeacherId = request.TeacherId;
+                var existingTeacher = await _infra.GetTeacherById(existingDomain);
+
                 var domain = CreateRequest<TeacherDomainModel>(request);
                 domain.TeacherId    = request.TeacherId;
                 domain.Name         = request.Name;
@@ -114,6 +130,13 @@ namespace StudentMS.Business.Services
                 result.ResponseData = updated;
                 result.ErrorCode    = updated ? ErrorCodes.Success : ErrorCodes.NotFound;
                 result.Message      = updated ? "Teacher updated successfully." : "Teacher not found.";
+
+                if (updated)
+                {
+                    _logger.LogActivityWithAudit(ActivityActions.TeacherUpdate,
+                        $"Updated teacher '{request.Name}'", "Teacher", request.TeacherId,
+                        existingTeacher, domain);
+                }
             }
             catch (Exception ex)
             {
@@ -141,6 +164,11 @@ namespace StudentMS.Business.Services
                 result.ResponseData = deleted;
                 result.ErrorCode    = deleted ? ErrorCodes.Success : ErrorCodes.NotFound;
                 result.Message      = deleted ? "Teacher deleted successfully." : "Teacher not found.";
+
+                if (deleted)
+                {
+                    _logger.LogActivity(ActivityActions.TeacherDelete, $"Deleted teacher id={request.TeacherId}", "Teacher", request.TeacherId);
+                }
             }
             catch (Exception ex)
             {

@@ -79,6 +79,7 @@
                 <!-- Nav buttons -->
                 <StackPanel DockPanel.Dock="Top">
 
+                    <!-- Students — visible to all roles (Req 3.1, 3.2) -->
                     <Button Style="{StaticResource NavBtn}"
                             Command="{Binding NavigateToCommand}"
                             CommandParameter="Students">
@@ -91,9 +92,11 @@
                         </StackPanel>
                     </Button>
 
+                    <!-- Teachers — Admin only (Req 3.1, 3.2) -->
                     <Button Style="{StaticResource NavBtn}"
                             Command="{Binding NavigateToCommand}"
-                            CommandParameter="Teachers">
+                            CommandParameter="Teachers"
+                            Visibility="{Binding AdminOnlyVisibility}">
                         <StackPanel Orientation="Horizontal">
                             <md:PackIcon Kind="AccountTie" Width="18" Height="18"
                                          Foreground="White" VerticalAlignment="Center"
@@ -103,9 +106,11 @@
                         </StackPanel>
                     </Button>
 
+                    <!-- Departments — Admin only (Req 3.1, 3.2) -->
                     <Button Style="{StaticResource NavBtn}"
                             Command="{Binding NavigateToCommand}"
-                            CommandParameter="Departments">
+                            CommandParameter="Departments"
+                            Visibility="{Binding AdminOnlyVisibility}">
                         <StackPanel Orientation="Horizontal">
                             <md:PackIcon Kind="Domain" Width="18" Height="18"
                                          Foreground="White" VerticalAlignment="Center"
@@ -115,6 +120,7 @@
                         </StackPanel>
                     </Button>
 
+                    <!-- Fees — visible to all roles (Req 3.1, 3.2) -->
                     <Button Style="{StaticResource NavBtn}"
                             Command="{Binding NavigateToCommand}"
                             CommandParameter="Fees">
@@ -127,7 +133,47 @@
                         </StackPanel>
                     </Button>
 
+                    <!-- User Management — Admin only (Req 3.1, 10.7) -->
+                    <Button Style="{StaticResource NavBtn}"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="UserManagement"
+                            Visibility="{Binding UserMgmtVisibility}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="AccountCog" Width="18" Height="18"
+                                         Foreground="White" VerticalAlignment="Center"
+                                         Margin="0,0,12,0"/>
+                            <TextBlock Text="User Management" Foreground="White"
+                                       VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
+
                 </StackPanel>
+
+                <!-- Bottom: Change Password link -->
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,16">
+                    <Rectangle Height="1" Fill="#55FFFFFF" Margin="16,0,16,12"/>
+                    <Button Style="{StaticResource NavBtn}"
+                            Command="{Binding NavigateToChangePasswordCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="LockReset" Width="18" Height="18"
+                                         Foreground="#B39DDB" VerticalAlignment="Center"
+                                         Margin="0,0,12,0"/>
+                            <TextBlock Text="Change Password" Foreground="#B39DDB"
+                                       VerticalAlignment="Center" FontSize="13"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource NavBtn}"
+                            Command="{Binding LogoutCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Logout" Width="18" Height="18"
+                                         Foreground="#EF9A9A" VerticalAlignment="Center"
+                                         Margin="0,0,12,0"/>
+                            <TextBlock Text="Logout" Foreground="#EF9A9A"
+                                       VerticalAlignment="Center" FontSize="13"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
             </DockPanel>
         </Border>
 

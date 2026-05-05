@@ -2,10 +2,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
 using StudentMS.Business.Interfaces;
+using StudentMS.Common.Session;
 using StudentMS.Models.RequestModels;
 using StudentMS.Models.ResponseModels;
 using StudentMS.UI.ViewModels.Base;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace StudentMS.UI.ViewModels.Fees
 {
@@ -27,6 +29,14 @@ namespace StudentMS.UI.ViewModels.Fees
         [ObservableProperty] private string _filterStatus = "All"; // All / Paid / Pending
 
         public IReadOnlyList<string> StatusOptions { get; } = new[] { "All", "Paid", "Pending" };
+
+        // ── Req 3.3: Read-only mode for Teacher role ─────────────────────────
+
+        /// <summary>True when the current user is a Teacher (read-only access).</summary>
+        public bool IsReadOnly => AppSession.Current.IsTeacher;
+
+        /// <summary>Hides add/edit/delete controls for Teacher role.</summary>
+        public Visibility ActionVisibility => IsReadOnly ? Visibility.Collapsed : Visibility.Visible;
 
         public event Action<int>? OpenFormRequested;
 

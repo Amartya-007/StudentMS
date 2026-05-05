@@ -23,7 +23,7 @@ namespace StudentMS.UI.ViewModels.Teachers
         [ObservableProperty] private ObservableCollection<TeacherResponseModel>    _teachers    = new();
         [ObservableProperty] private ObservableCollection<DepartmentResponseModel> _departments = new();
         [ObservableProperty] private TeacherResponseModel? _selectedTeacher;
-        [ObservableProperty] private int _filterDepartmentId;
+        [ObservableProperty] private int? _filterDepartmentId;
 
         public event Action<int>? OpenFormRequested;
 
@@ -34,11 +34,15 @@ namespace StudentMS.UI.ViewModels.Teachers
             ClearMessages();
             try
             {
-                var deptResult = await _departmentBusiness.GetDepartments(new DepartmentRequestModel());
-                if (deptResult.Status)
-                    Departments = new ObservableCollection<DepartmentResponseModel>(deptResult.ResponseData ?? new());
+                // Only load departments on first load
+                if (!Departments.Any())
+                {
+                    var deptResult = await _departmentBusiness.GetDepartments(new DepartmentRequestModel());
+                    if (deptResult.Status)
+                        Departments = new ObservableCollection<DepartmentResponseModel>(deptResult.ResponseData ?? new());
+                }
 
-                var result = await _teacherBusiness.GetTeachers(new TeacherRequestModel { DepartmentId = FilterDepartmentId });
+                var result = await _teacherBusiness.GetTeachers(new TeacherRequestModel { DepartmentId = FilterDepartmentId ?? 0 });
                 if (result.Status)
                     Teachers = new ObservableCollection<TeacherResponseModel>(result.ResponseData ?? new());
                 else
@@ -56,6 +60,13 @@ namespace StudentMS.UI.ViewModels.Teachers
         }
 
         [RelayCommand] private void AddTeacher() => OpenFormRequested?.Invoke(0);
+
+        [RelayCommand]
+        private async Task ClearFilterAsync()
+        {
+            FilterDepartmentId = null;
+            await LoadAsync();
+        }
 
         [RelayCommand]
         private void EditTeacher(TeacherResponseModel teacher)

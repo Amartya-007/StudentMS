@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using StudentMS.Business.Base;
 using StudentMS.Business.Interfaces;
+using StudentMS.Common.Logging;
 using StudentMS.Common.Models;
 using StudentMS.Infrastructure.Interfaces;
 using StudentMS.Models.DomainModels;
@@ -12,8 +13,13 @@ namespace StudentMS.Business.Services
     public class StudentBusiness : BusinessServiceBase, IStudentBusiness
     {
         private readonly IStudentInfra _infra;
+        private readonly IActivityLogBusiness _logger;
 
-        public StudentBusiness(IStudentInfra infra) => _infra = infra;
+        public StudentBusiness(IStudentInfra infra, IActivityLogBusiness logger)
+        {
+            _infra   = infra;
+            _logger  = logger;
+        }
 
         public async Task<AppResult<List<StudentResponseModel>>> GetStudents(StudentRequestModel request)
         {
@@ -85,6 +91,11 @@ namespace StudentMS.Business.Services
                 result.ResponseData = newId;
                 result.ErrorCode    = newId > 0 ? ErrorCodes.Success : ErrorCodes.DatabaseError;
                 result.Message      = newId > 0 ? "Student added successfully." : "Failed to add student.";
+
+                if (newId > 0)
+                {
+                    _logger.LogActivity(ActivityActions.StudentCreate, $"Created student '{request.Name}'", "Student", newId);
+                }
             }
             catch (Exception ex)
             {
@@ -106,6 +117,11 @@ namespace StudentMS.Business.Services
                 if (string.IsNullOrWhiteSpace(request.Name))
                     return Fail<bool>(ErrorCodes.ValidationFailed, "Student name is required.");
 
+                // Fetch existing student before update for audit log
+                var existingDomain = CreateRequest<StudentDomainModel>(request);
+                existingDomain.StudentId = request.StudentId;
+                var existingStudent = await _infra.GetStudentById(existingDomain);
+
                 var domain = CreateRequest<StudentDomainModel>(request);
                 domain.StudentId    = request.StudentId;
                 domain.Name         = request.Name;
@@ -120,6 +136,13 @@ namespace StudentMS.Business.Services
                 result.ResponseData = updated;
                 result.ErrorCode    = updated ? ErrorCodes.Success : ErrorCodes.NotFound;
                 result.Message      = updated ? "Student updated successfully." : "Student not found.";
+
+                if (updated)
+                {
+                    _logger.LogActivityWithAudit(ActivityActions.StudentUpdate,
+                        $"Updated student '{request.Name}'", "Student", request.StudentId,
+                        existingStudent, domain);
+                }
             }
             catch (Exception ex)
             {
@@ -147,6 +170,11 @@ namespace StudentMS.Business.Services
                 result.ResponseData = deleted;
                 result.ErrorCode    = deleted ? ErrorCodes.Success : ErrorCodes.NotFound;
                 result.Message      = deleted ? "Student deleted successfully." : "Student not found.";
+
+                if (deleted)
+                {
+                    _logger.LogActivity(ActivityActions.StudentDelete, $"Deleted student id={request.StudentId}", "Student", request.StudentId);
+                }
             }
             catch (Exception ex)
             {

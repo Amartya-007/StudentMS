@@ -3,167 +3,424 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:converters="clr-namespace:StudentMS.UI.Converters"
-        Title="Student Management System — Login"
-        Height="580" Width="460"
+        Title="StudentMS — Login"
+        Height="520" Width="820"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Background="#F5F5F5">
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
 
     <Window.Resources>
         <converters:BoolToVisibilityConverter        x:Key="BoolToVisibility"/>
         <converters:InverseBoolConverter             x:Key="InverseBool"/>
         <converters:NullOrEmptyToVisibilityConverter x:Key="StringToVisibility"/>
         <converters:BoolToPackIconKindConverter      x:Key="BoolToPackIcon"/>
+
+        <!-- Custom input style — clean, no MD outline floating label -->
+        <Style x:Key="CleanInput" TargetType="TextBox">
+            <Setter Property="Background"       Value="#F8F8FF"/>
+            <Setter Property="Foreground"       Value="#212121"/>
+            <Setter Property="BorderBrush"      Value="#DEDEDE"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="FontSize"         Value="14"/>
+            <Setter Property="Height"           Value="46"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="14,0">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Stretch"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#512DA8"/>
+                                <Setter Property="Background"  Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CleanPassword" TargetType="PasswordBox">
+            <Setter Property="Background"       Value="#F8F8FF"/>
+            <Setter Property="Foreground"       Value="#212121"/>
+            <Setter Property="BorderBrush"      Value="#DEDEDE"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="FontSize"         Value="14"/>
+            <Setter Property="Height"           Value="46"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="14,0">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Stretch"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#512DA8"/>
+                                <Setter Property="Background"  Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="160"/>   <!-- Dark header -->
-            <RowDefinition Height="*"/>     <!-- White card -->
-        </Grid.RowDefinitions>
+    <!-- Outer rounded card with drop shadow -->
+    <Border CornerRadius="16" ClipToBounds="True">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="30" ShadowDepth="4"
+                              Color="#000000" Opacity="0.25"/>
+        </Border.Effect>
 
-        <!-- ── Dark purple header ──────────────────────────────────────── -->
-        <Border Grid.Row="0" Background="#4527A0">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <md:PackIcon Kind="School"
-                             Width="48" Height="48"
-                             Foreground="White"
-                             HorizontalAlignment="Center"
-                             Margin="0,0,0,10"/>
-                <TextBlock Text="StudentMS"
-                           FontSize="28" FontWeight="Bold"
-                           Foreground="White"
-                           HorizontalAlignment="Center"/>
-                <TextBlock Text="Student Management System"
-                           FontSize="12"
-                           Foreground="#B39DDB"
-                           HorizontalAlignment="Center"
-                           Margin="0,4,0,0"/>
-            </StackPanel>
-        </Border>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="340"/>   <!-- Left branding panel -->
+                <ColumnDefinition Width="*"/>     <!-- Right form panel -->
+            </Grid.ColumnDefinitions>
 
-        <!-- ── White login card ────────────────────────────────────────── -->
-        <Border Grid.Row="1"
-                Background="White"
-                BorderBrush="#E0E0E0"
-                BorderThickness="1"
-                CornerRadius="0,0,4,4"
-                Margin="32,-1,32,32">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="32,28,32,28">
+            <!-- ── LEFT — dark purple branding ──────────────────────────── -->
+            <Border Grid.Column="0" Background="#3D1A8E">
+                <!-- Subtle diagonal accent -->
+                <Grid>
+                    <Ellipse Width="300" Height="300"
+                             Fill="#4527A0" Opacity="0.4"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Bottom"
+                             Margin="0,0,-80,-80"/>
+                    <Ellipse Width="200" Height="200"
+                             Fill="#5E35B1" Opacity="0.3"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Margin="-60,-60,0,0"/>
 
-                    <!-- Section title -->
-                    <TextBlock Text="Sign In"
-                               FontSize="20" FontWeight="Bold"
-                               Foreground="#212121"
-                               Margin="0,0,0,6"/>
-                    <TextBlock Text="Enter your credentials to continue"
-                               FontSize="13" Foreground="#757575"
-                               Margin="0,0,0,24"/>
+                    <StackPanel VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Margin="32">
 
-                    <!-- ── Username ──────────────────────────────────── -->
-                    <TextBlock Text="Username" FontSize="12"
-                               Foreground="#616161" Margin="0,0,0,4"/>
-                    <TextBox x:Name="UsernameBox"
-                             Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
-                             md:HintAssist.Hint="Enter your username"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Foreground="#212121"
-                             Margin="0,0,0,2"
-                             IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
-                    <TextBlock Text="{Binding UsernameError}"
-                               Foreground="#C62828" FontSize="11"
-                               Margin="2,2,0,10"
-                               Visibility="{Binding UsernameError, Converter={StaticResource StringToVisibility}}"/>
+                        <!-- Logo circle -->
+                        <Border Width="80" Height="80"
+                                Background="#512DA8"
+                                CornerRadius="40"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,20">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="16" ShadowDepth="2"
+                                                  Color="#000000" Opacity="0.3"/>
+                            </Border.Effect>
+                            <md:PackIcon Kind="School"
+                                         Width="44" Height="44"
+                                         Foreground="White"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Center"/>
+                        </Border>
 
-                    <!-- ── Password ──────────────────────────────────── -->
-                    <TextBlock Text="Password" FontSize="12"
-                               Foreground="#616161" Margin="0,0,0,4"/>
-                    <Grid Margin="0,0,0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="StudentMS"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,8"/>
 
-                        <!-- Masked PasswordBox -->
-                        <PasswordBox x:Name="PasswordBox"
+                        <TextBlock Text="Student Management System"
+                                   FontSize="13"
+                                   Foreground="#B39DDB"
+                                   HorizontalAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   Margin="0,0,0,32"/>
+
+                        <!-- Feature pills -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <Border Background="#44FFFFFF" CornerRadius="20"
+                                    Padding="14,6" Margin="0,0,0,8"
+                                    HorizontalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="AccountGroup" Foreground="White"
+                                                 Width="14" Height="14" VerticalAlignment="Center"
+                                                 Margin="0,0,6,0"/>
+                                    <TextBlock Text="Manage Students" Foreground="White" FontSize="12"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#44FFFFFF" CornerRadius="20"
+                                    Padding="14,6" Margin="0,0,0,8"
+                                    HorizontalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="CurrencyUsd" Foreground="White"
+                                                 Width="14" Height="14" VerticalAlignment="Center"
+                                                 Margin="0,0,6,0"/>
+                                    <TextBlock Text="Track Fees" Foreground="White" FontSize="12"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#44FFFFFF" CornerRadius="20"
+                                    Padding="14,6"
+                                    HorizontalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Domain" Foreground="White"
+                                                 Width="14" Height="14" VerticalAlignment="Center"
+                                                 Margin="0,0,6,0"/>
+                                    <TextBlock Text="Departments" Foreground="White" FontSize="12"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ── RIGHT — white form panel ─────────────────────────────── -->
+            <Border Grid.Column="1" Background="White">
+                <!-- Window controls: minimize + close -->
+                <Grid>
+                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Orientation="Horizontal" Margin="0,12,12,0">
+                        <!-- Minimize -->
+                        <Button Width="32" Height="32" Background="Transparent" BorderThickness="0"
+                                Cursor="Hand" Click="MinimizeButton_Click"
+                                AutomationProperties.Name="Minimize window"
+                                Margin="0,0,4,0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" Background="Transparent" CornerRadius="16" Width="32" Height="32">
+                                        <md:PackIcon Kind="WindowMinimize" Foreground="#9E9E9E"
+                                                     Width="16" Height="16"
+                                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#F5F5F5"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <!-- Close -->
+                        <Button Width="32" Height="32" Background="Transparent" BorderThickness="0"
+                                Cursor="Hand" Click="CloseButton_Click"
+                                AutomationProperties.Name="Close window">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" Background="Transparent" CornerRadius="16" Width="32" Height="32">
+                                        <md:PackIcon Kind="Close" Foreground="#9E9E9E"
+                                                     Width="16" Height="16"
+                                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#F5F5F5"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Form content -->
+                    <StackPanel VerticalAlignment="Center"
+                                Margin="44,0,44,0"
+                                FocusManager.FocusedElement="{Binding ElementName=UsernameBox}">
+
+                        <TextBlock Text="Welcome back 👋"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#1A1A2E"
+                                   Margin="0,0,0,6"/>
+                        <TextBlock Text="Sign in to your account to continue"
+                                   FontSize="13" Foreground="#9E9E9E"
+                                   Margin="0,0,0,32"/>
+
+                        <!-- Username -->
+                        <TextBlock Text="Username" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="#424242" Margin="0,0,0,6"/>
+                        <TextBox x:Name="UsernameBox"
+                                 Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource CleanInput}"
+                                 MaxLength="100"
+                                 AutomationProperties.Name="Username"
+                                 AutomationProperties.HelpText="Enter your login username"
+                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+                        <TextBlock Text="{Binding UsernameError}"
+                                   Foreground="#E53935" FontSize="11"
+                                   Margin="2,4,0,0"
+                                   Visibility="{Binding UsernameError, Converter={StaticResource StringToVisibility}}"/>
+
+                        <!-- Password -->
+                        <TextBlock Text="Password" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="#424242" Margin="0,16,0,6"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <PasswordBox x:Name="PasswordBox"
+                                         Grid.Column="0"
+                                         Style="{StaticResource CleanPassword}"
+                                         MaxLength="128"
+                                         AutomationProperties.Name="Password"
+                                         AutomationProperties.HelpText="Enter your password"
+                                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"
+                                         Visibility="{Binding ShowPassword,
+                                                      Converter={StaticResource BoolToVisibility},
+                                                      ConverterParameter=Inverse}"/>
+
+                            <TextBox x:Name="PlainPasswordBox"
                                      Grid.Column="0"
-                                     md:HintAssist.Hint="Enter your password"
-                                     Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
-                                     Foreground="#212121"
+                                     Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource CleanInput}"
+                                     MaxLength="128"
+                                     AutomationProperties.Name="Password (visible)"
                                      IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"
                                      Visibility="{Binding ShowPassword,
-                                                  Converter={StaticResource BoolToVisibility},
-                                                  ConverterParameter=Inverse}"/>
+                                                  Converter={StaticResource BoolToVisibility}}"/>
 
-                        <!-- Plain TextBox (show password mode) -->
-                        <TextBox x:Name="PlainPasswordBox"
-                                 Grid.Column="0"
-                                 Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
-                                 md:HintAssist.Hint="Enter your password"
-                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                 Foreground="#212121"
-                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"
-                                 Visibility="{Binding ShowPassword,
-                                              Converter={StaticResource BoolToVisibility}}"/>
+                            <!-- Eye toggle -->
+                            <Button Grid.Column="1"
+                                    Command="{Binding ToggleShowPasswordCommand}"
+                                    Width="46" Height="46"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    Margin="8,0,0,0"
+                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" Background="#F8F8FF"
+                                                BorderBrush="#DEDEDE" BorderThickness="1"
+                                                CornerRadius="8" Width="46" Height="46">
+                                            <md:PackIcon Kind="{Binding ShowPassword,
+                                                         Converter={StaticResource BoolToPackIcon}}"
+                                                         Foreground="#757575"
+                                                         Width="18" Height="18"
+                                                         HorizontalAlignment="Center"
+                                                         VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#EDE7F6"/>
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="#512DA8"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
 
-                        <!-- Eye toggle -->
-                        <Button Grid.Column="1"
-                                Command="{Binding ToggleShowPasswordCommand}"
-                                Style="{StaticResource MaterialDesignIconButton}"
-                                Foreground="#757575"
-                                ToolTip="Show / hide password"
-                                Margin="6,0,0,0"
+                        <TextBlock Text="{Binding PasswordError}"
+                                   Foreground="#E53935" FontSize="11"
+                                   Margin="2,4,0,0"
+                                   Visibility="{Binding PasswordError, Converter={StaticResource StringToVisibility}}"/>
+
+                        <!-- Error banner -->
+                        <Border Background="#FFF3F3"
+                                BorderBrush="#FFCDD2" BorderThickness="1"
+                                CornerRadius="8" Padding="12,10"
+                                Margin="0,14,0,0"
+                                Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibility}}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="AlertCircle" Foreground="#E53935"
+                                             Width="16" Height="16"
+                                             VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="{Binding ErrorMessage}"
+                                           Foreground="#C62828" FontSize="13"
+                                           TextWrapping="Wrap" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Login button -->
+                        <Button Command="{Binding LoginCommand}"
+                                Height="48"
+                                Margin="0,20,0,0"
+                                Cursor="Hand"
+                                IsDefault="True"
+                                AutomationProperties.Name="Sign in"
                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}">
-                            <md:PackIcon Kind="{Binding ShowPassword,
-                                         Converter={StaticResource BoolToPackIcon}}"/>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd"
+                                            Background="#512DA8"
+                                            CornerRadius="10"
+                                            Height="48">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="12" ShadowDepth="3"
+                                                              Color="#512DA8" Opacity="0.4"/>
+                                        </Border.Effect>
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                            <md:PackIcon Kind="Login" Foreground="White"
+                                                         Width="18" Height="18"
+                                                         VerticalAlignment="Center"
+                                                         Margin="0,0,8,0"
+                                                         Visibility="{Binding IsBusy,
+                                                             Converter={StaticResource BoolToVisibility},
+                                                             ConverterParameter=Inverse}"/>
+                                            <md:PackIcon Kind="Loading" Foreground="White"
+                                                         Width="18" Height="18"
+                                                         VerticalAlignment="Center"
+                                                         Margin="0,0,8,0"
+                                                         Visibility="{Binding IsBusy,
+                                                             Converter={StaticResource BoolToVisibility}}"/>
+                                            <TextBlock Foreground="White"
+                                                       FontSize="14" FontWeight="Bold"
+                                                       VerticalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="SIGN IN"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                                                <Setter Property="Text" Value="SIGNING IN..."/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#4527A0"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#311B92"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Bd" Property="Background" Value="#7E57C2"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
                         </Button>
-                    </Grid>
 
-                    <TextBlock Text="{Binding PasswordError}"
-                               Foreground="#C62828" FontSize="11"
-                               Margin="2,2,0,10"
-                               Visibility="{Binding PasswordError, Converter={StaticResource StringToVisibility}}"/>
+                        <!-- Progress -->
+                        <ProgressBar IsIndeterminate="True" Height="3"
+                                     Margin="0,10,0,0"
+                                     Foreground="#512DA8"
+                                     Background="Transparent"
+                                     Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"/>
 
-                    <!-- ── Error banner ──────────────────────────────── -->
-                    <Border Background="#FFEBEE"
-                            CornerRadius="4"
-                            Padding="12,10"
-                            Margin="0,0,0,16"
-                            Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibility}}">
-                        <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="AlertCircle"
-                                         Foreground="#C62828"
-                                         Width="18" Height="18"
-                                         VerticalAlignment="Center"
-                                         Margin="0,0,10,0"/>
-                            <TextBlock Text="{Binding ErrorMessage}"
-                                       Foreground="#C62828"
-                                       FontSize="13"
-                                       TextWrapping="Wrap"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
+                        <!-- Footer -->
+                        <TextBlock Text="© 2025 StudentMS. All rights reserved."
+                                   FontSize="11" Foreground="#BDBDBD"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,24,0,0"/>
 
-                    <!-- ── Login button ──────────────────────────────── -->
-                    <Button Content="LOGIN"
-                            Command="{Binding LoginCommand}"
-                            Style="{StaticResource MaterialDesignRaisedButton}"
-                            Background="#512DA8"
-                            Foreground="White"
-                            HorizontalAlignment="Stretch"
-                            Height="46"
-                            FontSize="14" FontWeight="SemiBold"
-                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
 
-                    <!-- ── Busy indicator ────────────────────────────── -->
-                    <ProgressBar IsIndeterminate="True"
-                                 Height="3"
-                                 Margin="0,12,0,0"
-                                 Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"/>
-
-                </StackPanel>
-            </ScrollViewer>
-        </Border>
-    </Grid>
+        </Grid>
+    </Border>
 </Window>

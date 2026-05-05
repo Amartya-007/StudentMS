@@ -4,4 +4,5 @@
   <Project Path="StudentMS.Infrastructure/StudentMS.Infrastructure.csproj" />
   <Project Path="StudentMS.Models/StudentMS.Models.csproj" />
   <Project Path="StudentMS.UI/StudentMS.UI.csproj" />
+  <Project Path="StudentMS.Tests/StudentMS.Tests.csproj" />
 </Solution>

@@ -20,11 +20,11 @@ namespace StudentMS.UI.ViewModels.Fees
             _studentBusiness = studentBusiness;
         }
 
-        [ObservableProperty] private int      _feeId;
-        [ObservableProperty] private int      _studentId;
-        [ObservableProperty] private decimal  _amount;
-        [ObservableProperty] private string   _formTitle  = "Add Fee";
-        [ObservableProperty] private bool     _isEditMode;
+        [ObservableProperty] private int     _feeId;
+        [ObservableProperty] private int     _studentId;
+        [ObservableProperty] private string? _amountText;   // string binding avoids decimal ConvertBack error on empty
+        [ObservableProperty] private string  _formTitle  = "Add Fee";
+        [ObservableProperty] private bool    _isEditMode;
 
         [ObservableProperty]
         private ObservableCollection<StudentResponseModel> _students = new();
@@ -64,11 +64,19 @@ namespace StudentMS.UI.ViewModels.Fees
             ClearMessages();
             try
             {
+                // Parse amount from string — avoids WPF decimal ConvertBack error on empty field
+                if (!decimal.TryParse(AmountText, out decimal parsedAmount) || parsedAmount <= 0)
+                {
+                    SetError("Please enter a valid amount greater than zero.");
+                    IsBusy = false;
+                    return;
+                }
+
                 var request = new FeesRequestModel
                 {
                     FeeId     = FeeId,
                     StudentId = StudentId,
-                    Amount    = Amount,
+                    Amount    = parsedAmount,
                     Status    = "Pending"
                 };
 

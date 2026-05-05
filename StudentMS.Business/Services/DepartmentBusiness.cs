@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using StudentMS.Business.Base;
 using StudentMS.Business.Interfaces;
+using StudentMS.Common.Logging;
 using StudentMS.Common.Models;
 using StudentMS.Infrastructure.Interfaces;
 using StudentMS.Models.DomainModels;
@@ -12,8 +13,13 @@ namespace StudentMS.Business.Services
     public class DepartmentBusiness : BusinessServiceBase, IDepartmentBusiness
     {
         private readonly IDepartmentInfra _infra;
+        private readonly IActivityLogBusiness _logger;
 
-        public DepartmentBusiness(IDepartmentInfra infra) => _infra = infra;
+        public DepartmentBusiness(IDepartmentInfra infra, IActivityLogBusiness logger)
+        {
+            _infra  = infra;
+            _logger = logger;
+        }
 
         public async Task<AppResult<List<DepartmentResponseModel>>> GetDepartments(DepartmentRequestModel request)
         {
@@ -76,6 +82,11 @@ namespace StudentMS.Business.Services
                 result.ResponseData = newId;
                 result.ErrorCode    = newId > 0 ? ErrorCodes.Success : ErrorCodes.DatabaseError;
                 result.Message      = newId > 0 ? "Department added successfully." : "Failed to add department.";
+
+                if (newId > 0)
+                {
+                    _logger.LogActivity(ActivityActions.DepartmentCreate, $"Created department '{request.DepartmentName}'", "Department", newId);
+                }
             }
             catch (Exception ex)
             {
@@ -97,6 +108,11 @@ namespace StudentMS.Business.Services
                 if (string.IsNullOrWhiteSpace(request.DepartmentName))
                     return Fail<bool>(ErrorCodes.ValidationFailed, "Department name is required.");
 
+                // Fetch existing department before update for audit log
+                var existingDomain = CreateRequest<DepartmentDomainModel>(request);
+                existingDomain.DepartmentId = request.DepartmentId;
+                var existingDept = await _infra.GetDepartmentById(existingDomain);
+
                 var domain = CreateRequest<DepartmentDomainModel>(request);
                 domain.DepartmentId   = request.DepartmentId;
                 domain.DepartmentName = request.DepartmentName;
@@ -106,6 +122,13 @@ namespace StudentMS.Business.Services
                 result.ResponseData = updated;
                 result.ErrorCode    = updated ? ErrorCodes.Success : ErrorCodes.NotFound;
                 result.Message      = updated ? "Department updated successfully." : "Department not found.";
+
+                if (updated)
+                {
+                    _logger.LogActivityWithAudit(ActivityActions.DepartmentUpdate,
+                        $"Updated department '{request.DepartmentName}'", "Department", request.DepartmentId,
+                        existingDept, domain);
+                }
             }
             catch (Exception ex)
             {
@@ -133,6 +156,11 @@ namespace StudentMS.Business.Services
                 result.ResponseData = deleted;
                 result.ErrorCode    = deleted ? ErrorCodes.Success : ErrorCodes.NotFound;
                 result.Message      = deleted ? "Department deleted successfully." : "Department not found.";
+
+                if (deleted)
+                {
+                    _logger.LogActivity(ActivityActions.DepartmentDelete, $"Deleted department id={request.DepartmentId}", "Department", request.DepartmentId);
+                }
             }
             catch (Exception ex)
             {

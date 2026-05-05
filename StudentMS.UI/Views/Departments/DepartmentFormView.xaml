@@ -4,67 +4,111 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:converters="clr-namespace:StudentMS.UI.Converters"
         Title="{Binding FormTitle}"
-        Height="300" Width="440"
+        Height="310" Width="450"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Background="#F5F5F5">
 
     <Window.Resources>
-        <converters:BoolToVisibilityConverter        x:Key="BoolToVisibility"/>
-        <converters:InverseBoolConverter             x:Key="InverseBool"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        <converters:InverseBoolConverter x:Key="InverseBool"/>
         <converters:NullOrEmptyToVisibilityConverter x:Key="StringToVisibility"/>
     </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Border CornerRadius="10" Background="White" Margin="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <Border Grid.Row="0" Background="#512DA8" Padding="24,18">
-            <StackPanel Orientation="Horizontal">
-                <md:PackIcon Kind="Domain" Foreground="White"
-                             Width="24" Height="24"
-                             VerticalAlignment="Center" Margin="0,0,12,0"/>
-                <TextBlock Text="{Binding FormTitle}"
-                           FontSize="17" FontWeight="Medium"
-                           Foreground="White" VerticalAlignment="Center"/>
-            </StackPanel>
-        </Border>
-
-        <!-- Fields -->
-        <StackPanel Grid.Row="1" Margin="24,20,24,8">
-
-            <TextBlock Text="Department Name *" FontSize="12" Foreground="#616161" Margin="0,0,0,4"/>
-            <TextBox Text="{Binding DepartmentName, UpdateSourceTrigger=PropertyChanged}"
-                     md:HintAssist.Hint="Enter department name"
-                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                     Foreground="#212121" Margin="0,0,0,12"
-                     IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
-
-            <Border Background="#FFEBEE" CornerRadius="4" Padding="12,8"
-                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibility}}">
+            <!-- Header -->
+            <Border Grid.Row="0" Background="#5E35B1" Padding="18" CornerRadius="10,10,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <md:PackIcon Kind="AlertCircle" Foreground="#C62828" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#C62828" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    <md:PackIcon Kind="Domain"
+                                 Foreground="White"
+                                 Width="20" Height="20"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,8,0"/>
+                    <TextBlock Text="{Binding FormTitle}"
+                               FontSize="15"
+                               FontWeight="SemiBold"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
-        </StackPanel>
 
-        <!-- Footer -->
-        <Border Grid.Row="2" Background="White"
-                BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Padding="24,14">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Cancel" IsCancel="True"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                        Foreground="#616161" Padding="20,8" Margin="0,0,10,0"/>
-                <Button Content="Save" Command="{Binding SaveCommand}"
-                        Style="{StaticResource MaterialDesignRaisedButton}"
-                        Padding="24,8"
-                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+            <!-- Body -->
+            <StackPanel Grid.Row="1" Margin="24,18,24,10">
+
+                <TextBlock Text="Department Name"
+                           FontSize="12"
+                           Foreground="#616161"
+                           Margin="0,0,0,4"/>
+
+                <TextBox Text="{Binding DepartmentName, UpdateSourceTrigger=PropertyChanged}"
+                         md:HintAssist.Hint="Enter department name"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Margin="0,0,0,12"
+                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+
+                <!-- Error -->
+                <Border Background="#FFEBEE"
+                        CornerRadius="4"
+                        Padding="10,6"
+                        Margin="0,4,0,0"
+                        Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibility}}">
+                    <StackPanel Orientation="Horizontal">
+                        <md:PackIcon Kind="AlertCircle"
+                                     Foreground="#C62828"
+                                     Width="16" Height="16"
+                                     Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding ErrorMessage}"
+                                   Foreground="#C62828"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Busy -->
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,10,0,0"
+                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}">
+                    <md:PackIcon Kind="Loading"
+                                 Width="16" Height="16"
+                                 Foreground="#5E35B1"/>
+                    <TextBlock Text="Saving..."
+                               Margin="6,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="12"
+                               Foreground="#616161"/>
+                </StackPanel>
+
             </StackPanel>
-        </Border>
-    </Grid>
+
+            <!-- Footer -->
+            <Border Grid.Row="2"
+                    Background="White"
+                    BorderBrush="#E0E0E0"
+                    BorderThickness="0,1,0,0"
+                    Padding="18">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                    <Button Content="Cancel"
+                            IsCancel="True"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Padding="18,6"
+                            Margin="0,0,8,0"/>
+
+                    <Button Content="Save"
+                            Command="{Binding SaveCommand}"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Padding="20,6"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+                </StackPanel>
+            </Border>
+
+        </Grid>
+    </Border>
 </Window>

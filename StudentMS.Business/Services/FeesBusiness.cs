@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using StudentMS.Business.Base;
 using StudentMS.Business.Interfaces;
+using StudentMS.Common.Logging;
 using StudentMS.Common.Models;
 using StudentMS.Infrastructure.Interfaces;
 using StudentMS.Models.DomainModels;
@@ -12,8 +13,13 @@ namespace StudentMS.Business.Services
     public class FeesBusiness : BusinessServiceBase, IFeesBusiness
     {
         private readonly IFeesInfra _infra;
+        private readonly IActivityLogBusiness _logger;
 
-        public FeesBusiness(IFeesInfra infra) => _infra = infra;
+        public FeesBusiness(IFeesInfra infra, IActivityLogBusiness logger)
+        {
+            _infra  = infra;
+            _logger = logger;
+        }
 
         public async Task<AppResult<List<FeesResponseModel>>> GetFees(FeesRequestModel request)
         {
@@ -97,6 +103,11 @@ namespace StudentMS.Business.Services
                 result.ResponseData = newId;
                 result.ErrorCode    = newId > 0 ? ErrorCodes.Success : ErrorCodes.DatabaseError;
                 result.Message      = newId > 0 ? "Fee added successfully." : "Failed to add fee.";
+
+                if (newId > 0)
+                {
+                    _logger.LogActivity(ActivityActions.FeeCreate, $"Created fee for student id={request.StudentId}, amount={request.Amount}", "Fee", newId);
+                }
             }
             catch (Exception ex)
             {
@@ -127,6 +138,11 @@ namespace StudentMS.Business.Services
                 result.ResponseData = updated;
                 result.ErrorCode    = updated ? ErrorCodes.Success : ErrorCodes.NotFound;
                 result.Message      = updated ? "Fee status updated successfully." : "Fee not found.";
+
+                if (updated)
+                {
+                    _logger.LogActivity(ActivityActions.FeeUpdate, $"Updated fee id={request.FeeId} status to '{request.Status}'", "Fee", request.FeeId);
+                }
             }
             catch (Exception ex)
             {

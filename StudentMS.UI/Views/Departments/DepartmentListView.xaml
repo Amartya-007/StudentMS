@@ -3,100 +3,134 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:StudentMS.UI.Converters"
-             Background="#F5F5F5"
+             Background="{DynamicResource MaterialDesignPaper}"
              Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
-        <converters:BoolToVisibilityConverter        x:Key="BoolToVisibility"/>
-        <converters:InverseBoolConverter             x:Key="InverseBool"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        <converters:InverseBoolConverter x:Key="InverseBool"/>
         <converters:NullOrEmptyToVisibilityConverter x:Key="StringToVisibility"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Page header -->
-        <Border Grid.Row="0" Background="White"
-                BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="24,16">
+        <!-- HEADER -->
+        <Border Grid.Row="0"
+                Padding="20"
+                Margin="0,0,0,16"
+                Background="{DynamicResource MaterialDesignCardBackground}"
+                CornerRadius="8"
+                md:ElevationAssist.Elevation="Dp2">
+
             <DockPanel LastChildFill="False">
-                <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
-                    <TextBlock Text="Departments" FontSize="20" FontWeight="Bold" Foreground="#212121"/>
-                    <TextBlock Text="Manage academic departments" FontSize="12" Foreground="#757575" Margin="0,2,0,0"/>
+
+                <StackPanel>
+                    <TextBlock Text="Departments"
+                               Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+
+                    <TextBlock Text="Manage academic departments"
+                               Style="{StaticResource MaterialDesignBody2TextBlock}"
+                               Margin="0,4,0,0"/>
                 </StackPanel>
+
                 <Button DockPanel.Dock="Right"
-                        Content="+ Add Department"
+                        Content="Add Department"
                         Command="{Binding AddDepartmentCommand}"
                         Style="{StaticResource MaterialDesignRaisedButton}"
-                        VerticalAlignment="Center" Padding="16,8"
+                        Padding="20,8"
+                        md:ButtonAssist.CornerRadius="6"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
             </DockPanel>
         </Border>
 
-        <!-- Messages -->
-        <StackPanel Grid.Row="1" Margin="28,10,28,0">
-            <Border Background="#FFEBEE" CornerRadius="4" Padding="12,8" Margin="0,0,0,6"
+        <!-- MESSAGES -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,12">
+
+            <Border Padding="12"
+                    CornerRadius="6"
+                    Background="#FDECEA"
                     Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibility}}">
                 <StackPanel Orientation="Horizontal">
-                    <md:PackIcon Kind="AlertCircle" Foreground="#C62828" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#C62828" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    <md:PackIcon Kind="AlertCircle" Foreground="#D32F2F" Margin="0,0,8,0"/>
+                    <TextBlock Text="{Binding ErrorMessage}" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
-            <Border Background="#E8F5E9" CornerRadius="4" Padding="12,8" Margin="0,0,0,6"
+
+            <Border Padding="12"
+                    CornerRadius="6"
+                    Background="#EDF7ED"
+                    Margin="0,8,0,0"
                     Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibility}}">
                 <StackPanel Orientation="Horizontal">
-                    <md:PackIcon Kind="CheckCircle" Foreground="#2E7D32" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding SuccessMessage}" Foreground="#2E7D32" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    <md:PackIcon Kind="CheckCircle" Foreground="#2E7D32" Margin="0,0,8,0"/>
+                    <TextBlock Text="{Binding SuccessMessage}" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
-            <ProgressBar IsIndeterminate="True" Height="3"
+
+            <ProgressBar IsIndeterminate="True"
+                         Height="4"
+                         Margin="0,10,0,0"
                          Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"/>
         </StackPanel>
 
-        <!-- Data grid card -->
-        <Border Grid.Row="2" Background="White"
-                BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4"
-                Margin="28,12,28,28">
+        <!-- DATA GRID -->
+        <Border Grid.Row="2"
+                Padding="8"
+                CornerRadius="8"
+                Background="{DynamicResource MaterialDesignCardBackground}"
+                md:ElevationAssist.Elevation="Dp2">
+
             <DataGrid ItemsSource="{Binding Departments}"
                       SelectedItem="{Binding SelectedDepartment}"
-                      AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
-                      Foreground="#212121" BorderThickness="0"
-                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F0F0F0"
-                      RowHeight="44" md:DataGridAssist.CellPadding="12 4 12 4">
-                <DataGrid.ColumnHeaderStyle>
-                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
-                        <Setter Property="Background"      Value="#FAFAFA"/>
-                        <Setter Property="Foreground"      Value="#424242"/>
-                        <Setter Property="FontWeight"      Value="SemiBold"/>
-                        <Setter Property="Padding"         Value="12,10"/>
-                        <Setter Property="BorderBrush"     Value="#E0E0E0"/>
-                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                    </Style>
-                </DataGrid.ColumnHeaderStyle>
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      Style="{StaticResource MaterialDesignDataGrid}"
+                      md:DataGridAssist.CellPadding="16 8"
+                      md:DataGridAssist.ColumnHeaderPadding="16 10"
+                      RowHeight="48">
+
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID"   Binding="{Binding DepartmentId}"   Width="80"/>
-                    <DataGridTextColumn Header="Name" Binding="{Binding DepartmentName}" Width="*"/>
-                    <DataGridTemplateColumn Header="Actions" Width="160">
+
+                    <DataGridTextColumn Header="ID"
+                                        Binding="{Binding DepartmentId}"
+                                        Width="80"/>
+
+                    <DataGridTextColumn Header="Department Name"
+                                        Binding="{Binding DepartmentName}"
+                                        Width="*"/>
+
+                    <!-- ACTIONS -->
+                    <DataGridTemplateColumn Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Button Content="Edit" Style="{StaticResource MaterialDesignFlatButton}"
-                                            Foreground="#512DA8" FontSize="12"
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                                    <Button Style="{StaticResource MaterialDesignToolButton}"
                                             Command="{Binding DataContext.EditDepartmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                            CommandParameter="{Binding}" Padding="8,4"/>
-                                    <Button Content="Delete" Style="{StaticResource MaterialDesignFlatButton}"
-                                            Foreground="#C62828" FontSize="12"
+                                            CommandParameter="{Binding}">
+                                        <md:PackIcon Kind="Pencil"/>
+                                    </Button>
+
+                                    <Button Style="{StaticResource MaterialDesignToolButton}"
                                             Command="{Binding DataContext.DeleteDepartmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                            CommandParameter="{Binding DepartmentId}" Padding="8,4"/>
+                                            CommandParameter="{Binding DepartmentId}">
+                                        <md:PackIcon Kind="Delete" Foreground="#D32F2F"/>
+                                    </Button>
+
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
+
     </Grid>
 </UserControl>

@@ -1,13 +1,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using StudentMS.UI.ViewModels;
 using System.Windows;
+using System.Windows.Input;
 
 namespace StudentMS.UI.Views
 {
     public partial class LoginView : Window
     {
         private readonly LoginViewModel _viewModel;
-        private bool _syncingPassword; // guard against recursive updates
+        private bool _syncingPassword;
 
         public LoginView(LoginViewModel viewModel)
         {
@@ -15,8 +16,14 @@ namespace StudentMS.UI.Views
             _viewModel  = viewModel;
             DataContext = _viewModel;
 
-            // ── Password sync ────────────────────────────────────────────────────
-            // PasswordBox → ViewModel (masked mode)
+            // Allow dragging the borderless window
+            MouseLeftButtonDown += (_, e) =>
+            {
+                if (e.ButtonState == MouseButtonState.Pressed)
+                    DragMove();
+            };
+
+            // PasswordBox → ViewModel (single source of truth for password)
             PasswordBox.PasswordChanged += (_, _) =>
             {
                 if (_syncingPassword) return;
@@ -25,22 +32,25 @@ namespace StudentMS.UI.Views
                 _syncingPassword = false;
             };
 
-            // PlainPasswordBox → PasswordBox (plain-text mode)
-            // The TextBox is two-way bound to ViewModel.Password already,
-            // but we also keep PasswordBox in sync so toggling back works.
+            // Keep PasswordBox in sync when ViewModel password changes
+            // (e.g. cleared after failed login, or synced from plain TextBox toggle)
             _viewModel.PropertyChanged += (_, e) =>
             {
                 if (_syncingPassword) return;
                 if (e.PropertyName == nameof(_viewModel.Password))
                 {
                     _syncingPassword = true;
-                    if (PasswordBox.Password != _viewModel.Password)
+                    if (PasswordBox.Password != (_viewModel.Password ?? string.Empty))
                         PasswordBox.Password = _viewModel.Password ?? string.Empty;
                     _syncingPassword = false;
                 }
+
+                // When toggling back to hidden mode, re-focus PasswordBox
+                if (e.PropertyName == nameof(_viewModel.ShowPassword) && !_viewModel.ShowPassword)
+                    PasswordBox.Focus();
             };
 
-            // ── Navigation ───────────────────────────────────────────────────────
+            // Navigate to main window on success
             _viewModel.LoginSucceeded += () =>
             {
                 var mainWindow = App.ServiceProvider.GetRequiredService<MainWindow>();
@@ -48,8 +58,14 @@ namespace StudentMS.UI.Views
                 Close();
             };
 
-            // Focus username on load
+            // Autofocus username on load
             Loaded += (_, _) => UsernameBox.Focus();
         }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+            => Application.Current.Shutdown();
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+            => WindowState = WindowState.Minimized;
     }
 }

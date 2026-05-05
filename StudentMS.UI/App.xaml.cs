@@ -11,7 +11,9 @@ using StudentMS.UI.ViewModels.Departments;
 using StudentMS.UI.ViewModels.Fees;
 using StudentMS.UI.ViewModels.Students;
 using StudentMS.UI.ViewModels.Teachers;
+using StudentMS.UI.ViewModels.Users;
 using StudentMS.UI.Views;
+using StudentMS.UI.Views.Users;
 using System.IO;
 using System.Windows;
 
@@ -60,25 +62,35 @@ namespace StudentMS.UI
             services.AddScoped<IDepartmentInfra, DepartmentInfra>();
             services.AddScoped<IFeesInfra,       FeesInfra>();
             services.AddScoped<IUserInfra,       UserInfra>();
+            services.AddScoped<IActivityLogInfra, ActivityLogInfra>();
 
             // Business
-            services.AddScoped<IStudentBusiness,    StudentBusiness>();
-            services.AddScoped<ITeacherBusiness,    TeacherBusiness>();
-            services.AddScoped<IDepartmentBusiness, DepartmentBusiness>();
-            services.AddScoped<IFeesBusiness,       FeesBusiness>();
-            services.AddScoped<IUserBusiness,       UserBusiness>();
+            services.AddScoped<IStudentBusiness,         StudentBusiness>();
+            services.AddScoped<ITeacherBusiness,         TeacherBusiness>();
+            services.AddScoped<IDepartmentBusiness,      DepartmentBusiness>();
+            services.AddScoped<IFeesBusiness,            FeesBusiness>();
+            services.AddScoped<IUserBusiness,            UserBusiness>();
+            services.AddScoped<IAccountManagerBusiness,  AccountManagerBusiness>();
+            services.AddScoped<IActivityLogBusiness,     ActivityLogBusiness>();
+            services.AddScoped<IActivityLogQueryBusiness, ActivityLogQueryBusiness>();
 
             // ViewModels
+            // Login/Main are transient — created fresh each session
             services.AddTransient<LoginViewModel>();
             services.AddTransient<MainViewModel>();
-            services.AddTransient<StudentListViewModel>();
+            // Form ViewModels are transient — each form open gets a fresh instance
             services.AddTransient<StudentFormViewModel>();
-            services.AddTransient<TeacherListViewModel>();
             services.AddTransient<TeacherFormViewModel>();
-            services.AddTransient<DepartmentListViewModel>();
             services.AddTransient<DepartmentFormViewModel>();
-            services.AddTransient<FeesListViewModel>();
             services.AddTransient<FeesFormViewModel>();
+            // Page ViewModels are singleton — created once, cached across tab switches
+            // This prevents redundant DB calls and fixes the Loaded timing race
+            services.AddSingleton<StudentListViewModel>();
+            services.AddSingleton<TeacherListViewModel>();
+            services.AddSingleton<DepartmentListViewModel>();
+            services.AddSingleton<FeesListViewModel>();
+            services.AddSingleton<UserManagementViewModel>();
+            services.AddSingleton<ChangePasswordViewModel>();
 
             // Views
             services.AddTransient<LoginView>();

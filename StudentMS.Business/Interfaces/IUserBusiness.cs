@@ -8,5 +8,6 @@ namespace StudentMS.Business.Interfaces
     {
         Task<AppResult<UserResponseModel>> ValidateUser(UserRequestModel request);
         Task<AppResult<int>>              CreateUser(UserRequestModel request);
+        Task<AppResult<bool>>             ChangePassword(ChangePasswordRequestModel request);
     }
 }

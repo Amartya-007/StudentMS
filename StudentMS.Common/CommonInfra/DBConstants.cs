@@ -40,8 +40,25 @@
 
         public struct UserSP
         {
-            public const string GetUserByUsername = "dbo.USP_GetUserByUsername";
-            public const string CreateUser        = "dbo.USP_CreateUser";
+            public const string GetUserByUsername    = "dbo.USP_GetUserByUsername";
+            public const string CreateUser           = "dbo.USP_CreateUser";
+            public const string UpdateFailedLogin    = "dbo.USP_UpdateFailedLoginCount";
+            public const string SetLockout           = "dbo.USP_SetLockout";
+            public const string ResetLockout         = "dbo.USP_ResetLockout";
+            public const string UpdatePasswordHash   = "dbo.USP_UpdatePasswordHash";
+            public const string GetAllUsers          = "dbo.USP_GetAllUsers";
+            public const string SetUserActiveStatus  = "dbo.USP_SetUserActiveStatus";
+            public const string CheckUsernameExists  = "dbo.USP_CheckUsernameExists";
+            public const string GetUserById          = "dbo.USP_GetUserById";
+            public const string LinkUserToTeacher    = "dbo.USP_LinkUserToTeacher";
+        }
+
+        public struct ActivityLogSP
+        {
+            public const string InsertActivityLog  = "dbo.USP_InsertActivityLog";
+            public const string InsertAuditLog     = "dbo.USP_InsertAuditLog";
+            public const string GetActivityLogs    = "dbo.USP_GetActivityLogs";
+            public const string GetAuditLogByLogId = "dbo.USP_GetAuditLogByLogId";
         }
     }
 }
